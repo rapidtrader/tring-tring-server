@@ -29,12 +29,8 @@ const addNewWinningNumber = asyncHandler(async (req, res) => {
 const userPredictionNumber = asyncHandler(async (req, res) => {
 
     const { predictionNumber } = req.body;
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, "shhh secret");
-    const userId = decoded._id;
 
     const userPrediction = new UserPrediction({
-        userId,
         predictionNumber,
     });
 
