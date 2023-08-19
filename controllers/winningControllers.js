@@ -35,7 +35,7 @@ const userPredictionNumber = asyncHandler(async (req, res) => {
     });
 
     await userPrediction.save().then((predictionNumber) => {
-        res.status(201).json({ message: "Prediction added successfully" });
+        res.status(201).json({ message: "Prediction Number added successfully" });
     }).catch((err) => {
         res.status(400).json({ message: err.message });
     });
