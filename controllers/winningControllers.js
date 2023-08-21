@@ -87,7 +87,7 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         }
         else {
             const userId = user._id;
-            UserPrediction.findOne({ userPhoneNumber: userId }).then((userPrediction) => {
+            UserPrediction.find({ userPhoneNumber: userId }).then((userPrediction) => {
                 if (!userPrediction) {
                     return res.status(404).json({ message: "User prediction not found" });
                 }
