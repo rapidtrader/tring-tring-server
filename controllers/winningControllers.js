@@ -55,6 +55,15 @@ const userPredictionNumber = asyncHandler(async (req, res) => {
 
 })
 
+function formatDateToDDMMYYYY(timestamp) {
+    const date = new Date(timestamp);
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
+
+    return `${day}-${month}-${year}`;
+}
+
 const editUserPredictionNumber = asyncHandler(async (req, res) => {
 
     const user = req.userData.user;
@@ -65,8 +74,27 @@ const editUserPredictionNumber = asyncHandler(async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
         else {
-            const userId = user._id;
-            
+            let userId = user._id;
+
+            UserPrediction.find({ userPhoneNumber: userId }).then((result) => {
+                if (!result) {
+                    return res.status(404).json({ message: "User prediction not found" });
+                }
+                else {
+                    result.map((item) => {
+                        const createdAtToday = formatDateToDDMMYYYY(item.createdAt);
+                        const today = formatDateToDDMMYYYY(Date.now());
+
+                        if (createdAtToday === today) {
+                            userId = item._id;
+                            return res.status(409).json({ message: "You have already predicted for today" });
+                        }
+                    });
+                }
+            }).catch((err) => {
+                res.status(400).json({ message: err.message });
+            });
+
             UserPrediction.updateOne({ userPhoneNumber: userId }, { $set: { predictionNumber: predictionNumber } }).then(() => {
                 res.status(201).json({ message: "Prediction Number updated successfully" });
             }).catch((err) => {
@@ -80,7 +108,7 @@ const editUserPredictionNumber = asyncHandler(async (req, res) => {
 
 const getUserPredictionNumber = asyncHandler(async (req, res) => {
     const user = req.userData.user;
-    
+
     await User.findOne({ phoneNumber: user }).then((user) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -101,6 +129,6 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
     }).catch((err) => {
         res.status(400).json({ message: err.message });
     });
-});            
+});
 
 module.exports = { getAllWinningNumbers, addNewWinningNumber, userPredictionNumber, editUserPredictionNumber, getUserPredictionNumber };
