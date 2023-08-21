@@ -1,8 +1,10 @@
 const express = require("express");
-const { VerifyAdmin, loginAdmin } = require("../controllers/adminControllers.js");
+const { verifyAdmin, loginAdmin } = require("../controllers/adminControllers.js");
 const router = express.Router();
 
-router.get("/verify", VerifyAdmin);
 router.post("/login", loginAdmin);
+router.get("/verify", verifyAdmin, (req, res) => {res.send(req.adminData)});
+// router.get("/users", VerifyAdmin, getAllUsers);
+
 
 module.exports = router;

@@ -1,11 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require("cors");
-const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv').config();
+const cors = require("cors");
+
 const userRoute = require('./routes/userRoute');
 const adminRoute = require('./routes/adminRoute.js');
 const winningRoute = require('./routes/winningRoute.js');
+
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -32,4 +34,4 @@ mongoose.connect(process.env.MONGO_URI)
         console.log(error);
     })
 
-    
+

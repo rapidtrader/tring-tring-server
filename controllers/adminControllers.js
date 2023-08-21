@@ -2,14 +2,24 @@ const asyncHandler = require("express-async-handler");
 const bodyParser = require('body-parser');
 const jwt = require("jsonwebtoken");
 
+function generateToken(user) {
+    return jwt.sign({ user: user.email }, "shhh secret", {
+        expiresIn: "60min",
+    });
+}
+
 const loginAdmin = asyncHandler(async (req, res) => {
+
     const { email, password } = req.body;
 
     if (email == "admin.tring@gmail.com" && password == "admin-tring") {
         const token = generateToken(email);
         res.status(200).json({
-            email,
-            token,
+            data: {
+                email,
+                token,
+            },
+            message: "Login successful",
         });
     } else {
         res.status(400);
@@ -17,25 +27,18 @@ const loginAdmin = asyncHandler(async (req, res) => {
     }
 });
 
-function generateToken(email) {
-    return jwt.sign({ email }, "shhh secret", {
-        expiresIn: "60min",
-    });
-}
 
-function verifyToken(req) {
-    try {
+const verifyAdmin = asyncHandler(async (req, res,next) => {
+    try{
         const token = req.headers.authorization.split(" ")[1];
-        var decoded = jwt.verify(token, "shhh secret");
-        return true;
-    } catch (error) {
-        return false
+        const decoded = jwt.verify(token, "shhh secret");
+        req.adminData = decoded;
+        next();
+    }catch(error){
+        res.status(401).json({
+            message: "Unauthorized Access",
+        })
     }
-}
-
-const VerifyAdmin = asyncHandler(async (req, res) => {
-    verifyToken(req) ? res.status(200).json({}) : res.status(401).json({});
-
 });
 
-module.exports = { loginAdmin, VerifyAdmin };
+module.exports = { loginAdmin, verifyAdmin };
