@@ -111,7 +111,7 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         }
         else {
             const userId = user._id;
-            Transaction.find({ userPhoneNumber: userId }).then((userPrediction) => {
+            Transaction.find({ user_id: userId }).then((userPrediction) => {
                 if (!userPrediction) {
                     return res.status(404).json({ message: "User prediction not found" });
                 }
@@ -124,7 +124,7 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         }
     }).catch((err) => {
         res.status(400).json({ message: err.message });
-    }); 
+    });
 });
 
 module.exports = { getAllWinningNumbers, addNewWinningNumber, userPredictionNumber, editUserPredictionNumber, getUserPredictionNumber };
