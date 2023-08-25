@@ -105,12 +105,12 @@ const editUserPredictionNumber = asyncHandler(async (req, res) => {
 const getUserPredictionNumber = asyncHandler(async (req, res) => {
     const user = req.userData.user;
 
-    await User.findOne({ phoneNumber: user }).then((user) => {
-        if (!user) {
+    await User.findOne({ phoneNumber: user }).then((foundUser) => {
+        if (!foundUser) {
             return res.status(404).json({ message: "User not found" });
         }
         else {
-            const userId = user._id;
+            const userId = foundUser._id;
             Transaction.find({ user_id: userId }).then((userPrediction) => {
                 if (!userPrediction) {
                     return res.status(404).json({ message: "User prediction not found" });
