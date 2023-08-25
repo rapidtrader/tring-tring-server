@@ -1,12 +1,12 @@
 const asyncHandler = require("express-async-handler");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-const Winning = require("../models/winningModel.js");
-const UserPrediction = require("../models/userPredictionModel.js");
-const User = require("../models/usersModel.js");
+const Draw = require("../models/draw.js");
+const Transaction = require("../models/transaction.js");
+const User = require("../models/user.js");
 
 const getAllWinningNumbers = asyncHandler(async (req, res) => {
-    await Winning.find({}).then((winningNumbers) => {
+    await Draw.find({}).then((winningNumbers) => {
         res.status(200).json(winningNumbers);
     }).catch((err) => {
         res.status(400).json({ message: err.message });
@@ -16,8 +16,8 @@ const getAllWinningNumbers = asyncHandler(async (req, res) => {
 const addNewWinningNumber = asyncHandler(async (req, res) => {
     const { winningNumber } = req.body;
 
-    const winning = new Winning({
-        winningNumber,
+    const winning = new Draw({
+        winning_number: winningNumber,
     });
 
     await winning.save().then((winningNumber) => {
@@ -38,9 +38,9 @@ const userPredictionNumber = asyncHandler(async (req, res) => {
         }
         else {
             const userId = user._id;
-            const userPrediction = new UserPrediction({
-                userPhoneNumber: userId,
-                predictionNumber,
+            const userPrediction = new Transaction({
+                user_id: userId,
+                prediction_number: predictionNumber,
             });
 
             userPrediction.save().then(() => {
@@ -64,6 +64,17 @@ function formatDateToDDMMYYYY(timestamp) {
     return `${day}-${month}-${year}`;
 }
 
+function formatAMPM(timestamp) {
+    var hours = timestamp.getHours();
+    var minutes = timestamp.getMinutes();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours.padStart(2, '0') ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes.padStart(2, '0') < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+}
+
 const editUserPredictionNumber = asyncHandler(async (req, res) => {
 
     const user = req.userData.user;
@@ -74,31 +85,16 @@ const editUserPredictionNumber = asyncHandler(async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
         else {
-            let userId = user._id;
-
-            UserPrediction.find({ userPhoneNumber: userId }).then((result) => {
-                if (!result) {
-                    return res.status(404).json({ message: "User prediction not found" });
-                }
-                else {
-                    result.map((item) => {
-                        const createdAtToday = formatDateToDDMMYYYY(item.createdAt);
-                        const today = formatDateToDDMMYYYY(Date.now());
-
-                        if (createdAtToday === today) {
-                            userId = item._id;
-                            return res.status(409).json({ message: "You have already predicted for today" });
-                        }
-                    });
-                }
-            }).catch((err) => {
-                res.status(400).json({ message: err.message });
+            const userId = user._id;
+            const userPrediction = new Transaction({
+                user_id: userId,
+                prediction_number: predictionNumber,
             });
 
-            UserPrediction.updateOne({ userPhoneNumber: userId }, { $set: { predictionNumber: predictionNumber } }).then(() => {
-                res.status(201).json({ message: "Prediction Number updated successfully" });
+            userPrediction.save().then(() => {
+                res.status(201).json({ message: "Prediction Number Updated successfully" });
             }).catch((err) => {
-                res.status(409).json({ message: err.message });
+                res.status(400).json({ message: err.message });
             });
         }
     }).catch((err) => {
@@ -115,7 +111,7 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         }
         else {
             const userId = user._id;
-            UserPrediction.find({ userPhoneNumber: userId }).then((userPrediction) => {
+            Transaction.find({ userPhoneNumber: userId }).then((userPrediction) => {
                 if (!userPrediction) {
                     return res.status(404).json({ message: "User prediction not found" });
                 }
@@ -128,7 +124,7 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         }
     }).catch((err) => {
         res.status(400).json({ message: err.message });
-    });
+    }); 
 });
 
 module.exports = { getAllWinningNumbers, addNewWinningNumber, userPredictionNumber, editUserPredictionNumber, getUserPredictionNumber };

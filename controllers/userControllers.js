@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const bodyParser = require('body-parser');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
-const User = require("../models/usersModel.js");
+const User = require("../models/user.js");
 
 const generateToken = (user) => {
     return jwt.sign({ user: user.phoneNumber }, "shhh secret", {
@@ -11,25 +11,37 @@ const generateToken = (user) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { phoneNumber, region, language, password } = req.body;
+    const { phoneNumber, username, age, gender, language, ip_address, location, region, password } = req.body;
 
     try {
-        const hash = await bcrypt.hash(password, 10);
-        const newUser = new User({
-            phoneNumber,
-            region,
-            language,
-            password: hash,
-        });
-        await newUser.save();
+        const user = await User.findOne({ phoneNumber }).exec();
+        if (user) {
+            return res.status(408).json({ message: "User already exists" });
+        } else {
+            const hash = await bcrypt.hash(password, 10);
+            const newUser = new User({
+                phoneNumber,
+                username,
+                age,
+                gender,
+                language,
+                ip_address,
+                location,
+                region,
+                password: hash,
+            });
+            await newUser.save();
 
-        res.status(201).json({
-            phoneNumber: newUser.phoneNumber,
-            token: generateToken(newUser),
-        })
-    } catch (error) {
-        res.status(409).json({ message: error.message });
-    }
+            return res.status(201).json({
+                data: {
+                    phoneNumber: newUser.phoneNumber,
+                    token: generateToken(newUser),
+                },
+                message: "User created successfully",
+            })
+        }} catch (error) {
+            res.status(409).json({ message: error.message });
+        }
 });
 
 const loginUser = asyncHandler(async (req, res) => {
