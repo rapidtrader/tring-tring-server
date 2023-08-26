@@ -5,9 +5,7 @@ const bcrypt = require("bcrypt")
 const User = require("../models/user.js");
 
 const generateToken = (user) => {
-    return jwt.sign({ user: user.phoneNumber }, "shhh secret", {
-        expiresIn: "60min",
-    });
+    return jwt.sign({ user: user.phoneNumber }, "shhh secret",);
 };
 
 const registerUser = asyncHandler(async (req, res) => {
