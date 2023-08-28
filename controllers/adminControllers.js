@@ -3,9 +3,7 @@ const bodyParser = require('body-parser');
 const jwt = require("jsonwebtoken");
 
 function generateToken(user) {
-    return jwt.sign({ user: user.email }, "shhh secret", {
-        expiresIn: "60min",
-    });
+    return jwt.sign({ user: user.email }, "shhh secret"     )
 }
 
 const loginAdmin = asyncHandler(async (req, res) => {

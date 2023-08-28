@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const drawSchema = new mongoose.Schema({
     draw_date: {
         type: Date,
+        default: Date.now,
     },
     draw_type: {
         type: String,
