@@ -58,7 +58,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 const formatUsersList = (users, transactions) => {
     const formattedUsers = [];
     users.forEach(user => {
-        const { _id, name, phoneNumber, createdAt } = user;
+        const { _id, name, phoneNumber, region, language, createdAt } = user;
         var userTransactions = [];
         transactions.forEach((transaction) => {
             if (transaction.user_id.equals(user._id)) {
@@ -82,6 +82,8 @@ const formatUsersList = (users, transactions) => {
             _id,
             name,
             phoneNumber,
+            region,
+            language,
             createdAt,
             userTransactions,
             lastPrediction,
