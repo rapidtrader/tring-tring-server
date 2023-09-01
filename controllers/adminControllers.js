@@ -42,6 +42,15 @@ const verifyAdmin = asyncHandler(async (req, res, next) => {
     }
 });
 
+function formatDateToDDMMYYYY(timestamp) {
+    const date = new Date(timestamp);
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear();
+
+    return `${day}-${month}-${year}`;
+}
+
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
         const users = await User.find();
@@ -65,7 +74,7 @@ const formatUsersList = (users, transactions) => {
                 // console.log("in if");
                 // console.log(user._id);
                 // console.log(transaction.user_id);
-                userTransactions.push(transaction.transaction_date);
+                userTransactions.push(formatDateToDDMMYYYY(transaction.transaction_date));
             }
             // else {
             //     console.log("in else");

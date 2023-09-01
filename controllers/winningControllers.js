@@ -27,6 +27,22 @@ const addNewWinningNumber = asyncHandler(async (req, res) => {
     });
 });
 
+const EditWinningNumber = asyncHandler(async (req, res) => {
+    const { winningNumber } = req.body;
+
+    const draws = await Draw.find({});
+    var editDrawId = "";
+    draws.map((draw, index) => {
+        if (index === (draws.length - 1)) {
+            editDrawId = draw._id;
+        }
+    })
+
+    await Draw.findOneAndUpdate({ _id: editDrawId }, { winning_number: winningNumber });
+    res.status(200).json({ message: "Updated Successfully" });
+
+})
+
 const userPredictionNumber = asyncHandler(async (req, res) => {
 
     const user = req.userData.user;
@@ -111,12 +127,12 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         }
         else {
             const userId = foundUser._id;
-            Transaction.find({ user_id: userId }).then((userPrediction) => {
-                if (!userPrediction) {
+            Transaction.find({ user_id: userId }).then((userPredictions) => {
+                if (!userPredictions) {
                     return res.status(404).json({ message: "User prediction not found" });
                 }
                 else {
-                    res.status(200).json(userPrediction);
+                    res.status(200).json(userPredictions);
                 }
             }).catch((err) => {
                 res.status(400).json({ message: err.message });
@@ -126,6 +142,49 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         res.status(400).json({ message: err.message });
     });
 });
+const getUserPredictionHistory = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+
+    await User.findOne({ phoneNumber: user }).then((foundUser) => {
+        if (!foundUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        else {
+            const userId = foundUser._id;
+            (async () => {
+                const userPredictions = await Transaction.find({ user_id: userId });
+                const formattedUsersHistory = await formattedUserHistory(userPredictions);
+                res.status(200).json(formattedUsersHistory);
+            })();
+        }
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+});
+
+const formattedUserHistory = async (userPredictions) => {
+    const formattedUHistory = [];
+    const draws = await Draw.find();
+    userPredictions.forEach((userPrediction) => {
+        const { _id, transaction_date, prediction_number } = userPrediction;
+        const winning_numbers = [];
+        draws.forEach((draw) => {
+            c_date = formatDateToDDMMYYYY(draw.created_date_time);
+            t_date = formatDateToDDMMYYYY(transaction_date);
+            if (t_date === c_date) {
+                winning_numbers.push(draw.winning_number)
+            }
+        })
+        const winning_number = winning_numbers[0];
+        formattedUHistory.push({
+            _id,
+            transaction_date,
+            prediction_number,
+            winning_number,
+        });
+    });
+    return formattedUHistory;
+}
 
 
-module.exports = { getAllWinningNumbers, addNewWinningNumber, userPredictionNumber, editUserPredictionNumber, getUserPredictionNumber };
+module.exports = { getAllWinningNumbers, addNewWinningNumber, EditWinningNumber, userPredictionNumber, editUserPredictionNumber, getUserPredictionNumber, getUserPredictionHistory };
