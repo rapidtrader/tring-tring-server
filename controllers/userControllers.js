@@ -37,9 +37,10 @@ const registerUser = asyncHandler(async (req, res) => {
                 },
                 message: "User created successfully",
             })
-        }} catch (error) {
-            res.status(409).json({ message: error.message });
         }
+    } catch (error) {
+        res.status(409).json({ message: error.message });
+    }
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -83,4 +84,22 @@ const verifyUser = asyncHandler(async (req, res, next) => {
     }
 });
 
-module.exports = { registerUser, loginUser, verifyUser };
+const checkTime = asyncHandler(async (req, res, next) => {
+    try {
+        const currentTime = new Date();
+        const constraintTime = new Date();
+        constraintTime.setHours(20, 30, 0);
+
+        if (currentTime < constraintTime) {
+            next();
+        } else {
+            res.status(403).json({ error: 'API access is restricted after 8:30 PM.' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
+
+
+module.exports = { registerUser, loginUser, verifyUser, checkTime };
