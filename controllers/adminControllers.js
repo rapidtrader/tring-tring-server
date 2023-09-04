@@ -71,16 +71,8 @@ const formatUsersList = (users, transactions) => {
         var userTransactions = [];
         transactions.forEach((transaction) => {
             if (transaction.user_id.equals(user._id)) {
-                // console.log("in if");
-                // console.log(user._id);
-                // console.log(transaction.user_id);
                 userTransactions.push(formatDateToDDMMYYYY(transaction.transaction_date));
             }
-            // else {
-            //     console.log("in else");
-            //     console.log(user._id);
-            //     console.log(transaction.user_id);
-            // }
         })
         const uniqueDays = _.uniq(userTransactions);
 
@@ -101,5 +93,56 @@ const formatUsersList = (users, transactions) => {
     return formattedUsers;
 };
 
+const getAllPredictions = asyncHandler(async (req, res) => {
+    try {
+        const users = await User.find();
+        const transactions = await Transaction.find();
 
-module.exports = { loginAdmin, verifyAdmin, getAllUsers };
+        const formattedPredictions = formatPredictionList(users, transactions);
+        res.status(200).json(formattedPredictions);
+
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+})
+const formatPredictionList = (users, transactions) => {
+    const formattedPredictions = [];
+    users.forEach(user => {
+        const { _id, name, phoneNumber } = user;
+        // var userTransactions = [];
+        var transactionDates = [];
+        var transactionTimestamps = [];
+        var predictionNumbers = [];
+
+        transactions.forEach((transaction) => {
+            if (transaction.user_id.equals(user._id)) {
+                transactionDates.push(formatDateToDDMMYYYY(transaction.transaction_date));
+                transactionTimestamps.push(transaction.transaction_date);
+                predictionNumbers.push(transaction.prediction_number);
+            }
+
+        })
+
+        // transactionTimestamps.sort((a, b) => {
+        //     return new Date(b) - new Date(a);
+        // });
+
+
+
+        formattedPredictions.push({
+            _id,
+            name,
+            phoneNumber,
+            transactionDates,
+            transactionTimestamps,
+            predictionNumbers
+        });
+    });
+
+    formattedPredictions.sort
+
+    return formattedPredictions;
+};
+
+
+module.exports = { loginAdmin, verifyAdmin, getAllUsers, getAllPredictions };
