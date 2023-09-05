@@ -18,34 +18,39 @@ const userSchema = mongoose.Schema({
 
     age: {
         type: Number,
-        default:"null",
+        default: "null",
         min: 0,
         max: 100
     },
 
     gender: {
         type: String,
-        default:"null"
+        default: "null"
     },
 
     ip_address: {
         type: String,
-        default:"null"
+        default: "null"
     },
 
     location: {
         type: String,
-        default:"null"
+        default: "null"
     },
 
     region: {
         type: String,
-        default:"null"
+        default: "null"
     },
 
     language: {
         type: String,
-        default:"null"
+        default: "null"
+    },
+
+    notificationsEnabled: {
+        type: Boolean,
+        default: true,
     },
 
     password: {

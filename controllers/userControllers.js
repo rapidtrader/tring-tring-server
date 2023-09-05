@@ -84,22 +84,38 @@ const verifyUser = asyncHandler(async (req, res, next) => {
     }
 });
 
-const checkTime = asyncHandler(async (req, res, next) => {
-    try {
-        const currentTime = new Date();
-        const constraintTime = new Date();
-        constraintTime.setHours(20, 30, 0);
+// const checkTime = asyncHandler(async (req, res, next) => {
+//     try {
+//         const currentTime = new Date();
+//         const constraintTime = new Date();
+//         constraintTime.setHours(20, 30, 0);
 
-        if (currentTime < constraintTime) {
-            next();
-        } else {
-            res.status(403).json({ error: 'API access is restricted after 8:30 PM.' });
+//         if (currentTime < constraintTime) {
+//             next();
+//         } else {
+//             res.status(403).json({ error: 'API access is restricted after 8:30 PM.' });
+//         }
+//     }
+//     catch (err) {
+//         console.log(err);
+//     }
+// })
+
+const userSettings = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+    const { language, notificationsEnabled } = req.body;
+
+    await User.findOneAndUpdate({ phoneNumber: user }, { language, notificationsEnabled }).then((foundUser) => {
+        if (!foundUser) {
+            return res.status(404).json({ message: "User not found" });
         }
-    }
-    catch (err) {
-        console.log(err);
-    }
+        else {
+            res.status(201).json({ message: "Setting updated successfully" });
+        }
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, checkTime };
+module.exports = { registerUser, loginUser, verifyUser, userSettings };
