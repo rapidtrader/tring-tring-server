@@ -107,41 +107,68 @@ const getAllPredictions = asyncHandler(async (req, res) => {
 })
 const formatPredictionList = (users, transactions) => {
     const formattedPredictions = [];
-    users.forEach(user => {
-        const { _id, name, phoneNumber } = user;
-        // var userTransactions = [];
-        var transactionDates = [];
-        var transactionTimestamps = [];
-        var predictionNumbers = [];
+    transactions.forEach(transaction => {
+        const { _id, prediction_number, transaction_date } = transaction;
+        var name = '';
+        var phoneNumber = '';
 
-        transactions.forEach((transaction) => {
+        users.forEach((user) => {
             if (transaction.user_id.equals(user._id)) {
-                transactionDates.push(formatDateToDDMMYYYY(transaction.transaction_date));
-                transactionTimestamps.push(transaction.transaction_date);
-                predictionNumbers.push(transaction.prediction_number);
+                name = user.name;
+                phoneNumber = user.phoneNumber;
             }
 
         })
 
-        // transactionTimestamps.sort((a, b) => {
-        //     return new Date(b) - new Date(a);
-        // });
+        const transactionDate = formatDateToDDMMYYYY(transaction_date);
+        var isEdited = '';
 
+        function hasMultiplePredictions(phoneNumber, transactionDate) {
+            // Filter transactions for the specified phoneNumber and transactionDate
+            const filteredTransactions = formattedPredictions.filter(transaction => {
+                return transaction.phoneNumber === phoneNumber && transaction.transactionDate === transactionDate;
+            });
 
+            // Check if there are more than one prediction_numbers for the filtered transactions
+            return filteredTransactions.length > 1;
+        }
+
+        formattedPredictions.map((prediction) => {
+            if (hasMultiplePredictions(prediction.phoneNumber, prediction.transactionDate)) {
+                isEdited = true;
+            } else {
+                isEdited = false;
+            }
+        })
 
         formattedPredictions.push({
             _id,
             name,
             phoneNumber,
-            transactionDates,
-            transactionTimestamps,
-            predictionNumbers
+            transaction_date,
+            transactionDate,
+            prediction_number,
+            isEdited
         });
     });
 
-    formattedPredictions.sort
+    formattedPredictions.sort((a, b) => {
+        return new Date(b.transaction_date) - new Date(a.transaction_date);
+    })
 
-    return formattedPredictions;
+    const uniqueEntries = new Set();
+
+    // Use map to iterate through the data and add unique combinations to the Set
+    const uniqueData = formattedPredictions.filter(entry => {
+        const key = `${entry.phoneNumber}-${entry.transactionDate}`;
+        if (!uniqueEntries.has(key)) {
+            uniqueEntries.add(key);
+            return true;
+        }
+        return false;
+    });
+
+    return uniqueData;
 };
 
 
