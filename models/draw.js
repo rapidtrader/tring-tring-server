@@ -17,6 +17,9 @@ const drawSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    youtube_url: {
+        type: String
+    },
     created_date_time: {
         type: Date,
         default: Date.now,

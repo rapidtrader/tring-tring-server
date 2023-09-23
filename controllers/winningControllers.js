@@ -14,21 +14,22 @@ const getAllWinningNumbers = asyncHandler(async (req, res) => {
 });
 
 const addNewWinningNumber = asyncHandler(async (req, res) => {
-    const { winningNumber } = req.body;
+    const { winningNumber, youtube_url } = req.body;
 
     const winning = new Draw({
         winning_number: winningNumber,
+        youtube_url
     });
 
     await winning.save().then((winningNumber) => {
-        res.status(201).json({ message: "Winning numbers added successfully" });
+        res.status(201).json({ message: "Winning number added successfully" });
     }).catch((err) => {
         res.status(400).json({ message: err.message });
     });
 });
 
 const EditWinningNumber = asyncHandler(async (req, res) => {
-    const { winningNumber } = req.body;
+    const { winningNumber, youtube_url } = req.body;
 
     const draws = await Draw.find({});
     var editDrawId = "";
@@ -38,7 +39,7 @@ const EditWinningNumber = asyncHandler(async (req, res) => {
         }
     })
 
-    await Draw.findOneAndUpdate({ _id: editDrawId }, { winning_number: winningNumber });
+    await Draw.findOneAndUpdate({ _id: editDrawId }, { winning_number: winningNumber, youtube_url });
     res.status(200).json({ message: "Updated Successfully" });
 
 })
