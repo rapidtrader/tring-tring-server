@@ -80,17 +80,6 @@ function formatDateToDDMMYYYY(timestamp) {
     return `${day}-${month}-${year}`;
 }
 
-function formatAMPM(timestamp) {
-    var hours = timestamp.getHours();
-    var minutes = timestamp.getMinutes();
-    var ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours.padStart(2, '0') ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes.padStart(2, '0') < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-}
-
 const editUserPredictionNumber = asyncHandler(async (req, res) => {
 
     const user = req.userData.user;
@@ -142,6 +131,9 @@ const getUserPredictionNumber = asyncHandler(async (req, res) => {
         res.status(400).json({ message: err.message });
     });
 });
+
+
+
 const getUserPredictionHistory = asyncHandler(async (req, res) => {
     const user = req.userData.user;
 

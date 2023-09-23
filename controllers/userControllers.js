@@ -84,23 +84,6 @@ const verifyUser = asyncHandler(async (req, res, next) => {
     }
 });
 
-// const checkTime = asyncHandler(async (req, res, next) => {
-//     try {
-//         const currentTime = new Date();
-//         const constraintTime = new Date();
-//         constraintTime.setHours(20, 30, 0);
-
-//         if (currentTime < constraintTime) {
-//             next();
-//         } else {
-//             res.status(403).json({ error: 'API access is restricted after 8:30 PM.' });
-//         }
-//     }
-//     catch (err) {
-//         console.log(err);
-//     }
-// })
-
 const userSettings = asyncHandler(async (req, res) => {
     const user = req.userData.user;
     const { language, notificationsEnabled } = req.body;
@@ -117,5 +100,25 @@ const userSettings = asyncHandler(async (req, res) => {
     });
 })
 
+const getEditCount = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings };
+    await User.findOne({ phoneNumber: user }).then((foundUser) => {
+        res.status(201).json({ editCount: foundUser.editCount });
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+})
+
+const updateEditCount = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+
+    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { editCount: 1 } },
+        { new: true }).then((foundUser) => {
+            res.status(201).json({ editCount: foundUser.editCount });
+        }).catch((err) => {
+            res.status(400).json({ message: err.message });
+        });
+})
+
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount };
