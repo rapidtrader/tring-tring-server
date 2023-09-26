@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 const User = require("../models/user.js");
+const sdk = require('api')('@msg91api/v5.0#6n91xmlhu4pcnz');
 
 const generateToken = (user) => {
     return jwt.sign({ user: user.phoneNumber }, "shhh secret",);
@@ -121,4 +122,29 @@ const updateEditCount = asyncHandler(async (req, res) => {
         });
 })
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount };
+const sendOtp = asyncHandler(async (req, res) => {
+    sdk.auth('406611Tj5sg0N5D6511529cP1');
+    sdk.sendotp({
+    }, { mobile: '7254880990', template_id: '3369796a6353383033323531' })
+        .then(({ data }) => console.log(data))
+        .catch(err => console.error(err));
+})
+
+const verifyOtp = asyncHandler(async (req, res) => {
+    sdk.auth('406611Tj5sg0N5D6511529cP1');
+    sdk.sendotp({
+    }, { mobile: '7254880990', template_id: '3369796a6353383033323531' })
+        .then(({ data }) => console.log(data))
+        .catch(err => console.error(err));
+})
+
+const resendOtp = asyncHandler(async (req, res) => {
+    sdk.auth('406611Tj5sg0N5D6511529cP1');
+    sdk.sendotp({
+    }, { mobile: '7254880990', template_id: '3369796a6353383033323531' })
+        .then(({ data }) => console.log(data))
+        .catch(err => console.error(err));
+})
+
+
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, resendOtp, verifyOtp, sendOtp };
