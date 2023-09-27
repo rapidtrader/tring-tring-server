@@ -122,6 +122,17 @@ const updateEditCount = asyncHandler(async (req, res) => {
         });
 })
 
+const getUserDetails = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+
+    await User.findOne({ phoneNumber: user }).then((foundUser) => {
+        res.status(201).json(foundUser);
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+
+})
+
 const sendOtp = asyncHandler(async (req, res) => {
     sdk.auth('406611Tj5sg0N5D6511529cP1');
     sdk.sendotp({
@@ -147,4 +158,4 @@ const resendOtp = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, resendOtp, verifyOtp, sendOtp };
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, getUserDetails, resendOtp, verifyOtp, sendOtp };
