@@ -7,7 +7,7 @@ router.post("/login", loginUser);
 router.get("/verify", verifyUser, (req, res) => { res.send(req.userData) });
 router.post("/settings", verifyUser, userSettings);
 
-router.get("user_details", verifyUser, getUserDetails);
+router.get("/user_details", verifyUser, getUserDetails);
 
 router.post("/send_otp", sendOtp);
 router.get("/verify_otp", verifyOtp);
