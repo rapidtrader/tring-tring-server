@@ -113,8 +113,8 @@ const getEditCount = asyncHandler(async (req, res) => {
 
 const updateEditCount = asyncHandler(async (req, res) => {
     const user = req.userData.user;
-
-    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { editCount: 1 } },
+    const { incrementValue } = req.body;
+    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { editCount: incrementValue } },
         { new: true }).then((foundUser) => {
             res.status(201).json({ editCount: foundUser.editCount });
         }).catch((err) => {
