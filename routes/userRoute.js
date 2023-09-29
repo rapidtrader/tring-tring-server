@@ -1,5 +1,5 @@
 const express = require("express");
-const { verifyUser, loginUser, registerUser, userSettings, getEditCount, updateEditCount, getUserDetails, resendOtp, verifyOtp, sendOtp } = require("../controllers/userControllers.js");
+const { verifyUser, loginUser, registerUser, userSettings, getEditCount, updateEditCount, intializeEditCount, getUserDetails, resendOtp, verifyOtp, sendOtp } = require("../controllers/userControllers.js");
 const router = express.Router();
 
 router.post("/register", registerUser);
@@ -15,5 +15,6 @@ router.get("resend_otp", resendOtp);
 
 router.get("/edit_count", verifyUser, getEditCount);
 router.post("/edit_count", verifyUser, updateEditCount);
+router.post("/per_day_edit_count", verifyUser, intializeEditCount);
 
 module.exports = router;
