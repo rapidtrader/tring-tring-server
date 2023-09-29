@@ -111,7 +111,7 @@ const getEditCount = asyncHandler(async (req, res) => {
     });
 })
 
-const updateEditCount = asyncHandler(async (req, res) => {
+const decrementEditCount = asyncHandler(async (req, res) => {
     const user = req.userData.user;
     const { decrementValue } = req.body;
     await User.findOneAndUpdate({ phoneNumber: user }, { $dec: { editCount: decrementValue } },
@@ -121,9 +121,10 @@ const updateEditCount = asyncHandler(async (req, res) => {
             res.status(400).json({ message: err.message });
         });
 })
-const intializeEditCount = asyncHandler(async (req, res) => {
+const updateEditCount = asyncHandler(async (req, res) => {
+    const { incrementValue } = req.body;
     const user = req.userData.user;
-    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { editCount: 3 } },
+    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { editCount: incrementValue } },
         { new: true }).then((foundUser) => {
             res.status(201).json({ editCount: foundUser.editCount });
         }).catch((err) => {
@@ -167,4 +168,4 @@ const resendOtp = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, intializeEditCount, getUserDetails, resendOtp, verifyOtp, sendOtp };
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, decrementEditCount, getUserDetails, resendOtp, verifyOtp, sendOtp };
