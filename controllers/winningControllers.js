@@ -72,6 +72,24 @@ const userPredictionNumber = asyncHandler(async (req, res) => {
 
 })
 
+const editUserPredictionNumber = asyncHandler(async (req, res) => {
+    const { predictionNumber, id } = req.body;
+    const user = req.userData.user;
+    await User.findOne({ phoneNumber: user }).then((foundUser) => {
+        if (!foundUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        else {
+            Transaction.findOneAndUpdate({ _id: id }, { prediction_number: predictionNumber });
+        }
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+
+    res.status(200).json({ message: "Updated Successfully" });
+
+})
+
 function formatDateToDDMMYYYY(timestamp) {
     const date = new Date(timestamp);
     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -81,7 +99,7 @@ function formatDateToDDMMYYYY(timestamp) {
     return `${day}-${month}-${year}`;
 }
 
-const editUserPredictionNumber = asyncHandler(async (req, res) => {
+const AddUserPredictionNumber = asyncHandler(async (req, res) => {
 
     const user = req.userData.user;
     const { predictionNumber } = req.body;
@@ -180,4 +198,4 @@ const formattedUserHistory = async (userPredictions) => {
 }
 
 
-module.exports = { getAllWinningNumbers, addNewWinningNumber, EditWinningNumber, userPredictionNumber, editUserPredictionNumber, getUserPredictionNumber, getUserPredictionHistory };
+module.exports = { getAllWinningNumbers, addNewWinningNumber, EditWinningNumber, userPredictionNumber, AddUserPredictionNumber, editUserPredictionNumber, getUserPredictionNumber, getUserPredictionHistory };
