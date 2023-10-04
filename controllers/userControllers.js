@@ -101,6 +101,16 @@ const userSettings = asyncHandler(async (req, res) => {
     });
 })
 
+const getUsers = asyncHandler(async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+})
+
 const resetPassword = asyncHandler(async (req, res) => {
     const { phoneNumber, password } = req.body;
     const hash = await bcrypt.hash(password, 10);
@@ -184,4 +194,4 @@ const resendOtp = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, decrementEditCount, getUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp };
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, decrementEditCount, getUserDetails, getUsers, resetPassword, resendOtp, verifyOtp, sendOtp };
