@@ -115,7 +115,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     const { phoneNumber, password } = req.body;
     const hash = await bcrypt.hash(password, 10);
 
-    await User.findOneAndUpdate({ phoneNumber: phoneNumber }, { password: hash }).then((foundUser) => {
+    await User.findOneAndUpdate({ phoneNumber }, { password: hash }).then((foundUser) => {
         if (!foundUser) {
             return res.status(404).json({ message: "User not found" });
         }
