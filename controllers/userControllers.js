@@ -101,6 +101,22 @@ const userSettings = asyncHandler(async (req, res) => {
     });
 })
 
+const resetPassword = asyncHandler(async (req, res) => {
+    const { phoneNumber, password } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+
+    await User.findOneAndUpdate({ phoneNumber: phoneNumber }, { password: hash }).then((foundUser) => {
+        if (!foundUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        else {
+            res.status(201).json({ message: "Password updated successfully" });
+        }
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+})
+
 const getEditCount = asyncHandler(async (req, res) => {
     const user = req.userData.user;
 
@@ -168,4 +184,4 @@ const resendOtp = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, decrementEditCount, getUserDetails, resendOtp, verifyOtp, sendOtp };
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, decrementEditCount, getUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp };

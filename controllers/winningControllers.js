@@ -81,7 +81,7 @@ const editUserPredictionNumber = asyncHandler(async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
         else {
-            Transaction.findOneAndUpdate({ _id: id }, { prediction_number: predictionNumber, transaction_date }, { new: true });
+            Transaction.findByIdAndUpdate(id, { prediction_number: predictionNumber, transaction_date }, { new: true });
         }
     }).catch((err) => {
         res.status(400).json({ message: err.message });
