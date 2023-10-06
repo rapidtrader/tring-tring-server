@@ -10,7 +10,7 @@ const generateToken = (user) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { phoneNumber, username, age, gender, language, ip_address, location, region, password } = req.body;
+    const { phoneNumber, email, name, age, gender, language, ip_address, location, region, password } = req.body;
 
     try {
         const user = await User.findOne({ phoneNumber }).exec();
@@ -20,8 +20,9 @@ const registerUser = asyncHandler(async (req, res) => {
             const hash = await bcrypt.hash(password, 10);
             const newUser = new User({
                 phoneNumber,
-                username,
+                name,
                 age,
+                email,
                 gender,
                 language,
                 ip_address,

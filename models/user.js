@@ -23,6 +23,11 @@ const userSchema = mongoose.Schema({
         max: 100
     },
 
+    email: {
+        type: String,
+        default: null,
+    },
+
     gender: {
         type: String,
         default: "null"
