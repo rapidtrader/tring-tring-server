@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Draw = require("../models/draw.js");
 const Transaction = require("../models/transaction.js");
 const User = require("../models/user.js");
+const mongoose = require('mongoose');
 
 const getAllWinningNumbers = asyncHandler(async (req, res) => {
     await Draw.find({}).then((winningNumbers) => {
@@ -76,18 +77,20 @@ const editUserPredictionNumber = asyncHandler(async (req, res) => {
     const { predictionNumber, id } = req.body;
     const user = req.userData.user;
     const transaction_date = new Date();
+    const objectId = new mongoose.Types.ObjectId(id);
     await User.findOne({ phoneNumber: user }).then((foundUser) => {
         if (!foundUser) {
             return res.status(404).json({ message: "User not found" });
         }
         else {
-            Transaction.findByIdAndUpdate(id, { prediction_number: predictionNumber, transaction_date }, { new: true });
+            Transaction.findByIdAndUpdate(objectId, { prediction_number: predictionNumber, transaction_date }, { new: true }).then(() => {
+                res.status(200).json({ message: "Updated Successfully" });
+            });
         }
     }).catch((err) => {
         res.status(400).json({ message: err.message });
     });
 
-    res.status(200).json({ message: "Updated Successfully" });
 
 })
 
@@ -180,19 +183,23 @@ const formattedUserHistory = async (userPredictions) => {
     userPredictions.forEach((userPrediction) => {
         const { _id, transaction_date, prediction_number } = userPrediction;
         const winning_numbers = [];
+        const youtube_urls = [];
         draws.forEach((draw) => {
             c_date = formatDateToDDMMYYYY(draw.created_date_time);
             t_date = formatDateToDDMMYYYY(transaction_date);
             if (t_date === c_date) {
                 winning_numbers.push(draw.winning_number)
+                youtube_urls.push(draw.youtube_url)
             }
         })
         const winning_number = winning_numbers[0];
+        const youtube_url = youtube_urls[0];
         formattedUHistory.push({
             _id,
             transaction_date,
             prediction_number,
             winning_number,
+            youtube_url
         });
     });
     return formattedUHistory;
