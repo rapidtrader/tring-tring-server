@@ -62,9 +62,21 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    editCount: {
+    predictions: {
         type: Number,
         default: 0,
+    },
+    tempPredictions: {
+        type: Number,
+        default: 0
+    },
+    addedPredictions: {
+        type: Number,
+        default: 0
+    },
+    editedPredictions: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true,

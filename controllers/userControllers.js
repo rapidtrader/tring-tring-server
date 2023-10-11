@@ -128,37 +128,6 @@ const resetPassword = asyncHandler(async (req, res) => {
     });
 })
 
-const getEditCount = asyncHandler(async (req, res) => {
-    const user = req.userData.user;
-
-    await User.findOne({ phoneNumber: user }).then((foundUser) => {
-        res.status(201).json({ editCount: foundUser.editCount });
-    }).catch((err) => {
-        res.status(400).json({ message: err.message });
-    });
-})
-
-const decrementEditCount = asyncHandler(async (req, res) => {
-    const user = req.userData.user;
-    const { decrementValue } = req.body;
-    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { editCount: -decrementValue } },
-        { new: true }).then((foundUser) => {
-            res.status(201).json({ editCount: foundUser.editCount });
-        }).catch((err) => {
-            res.status(400).json({ message: err.message });
-        });
-})
-const updateEditCount = asyncHandler(async (req, res) => {
-    const { incrementValue } = req.body;
-    const user = req.userData.user;
-    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { editCount: incrementValue } },
-        { new: true }).then((foundUser) => {
-            res.status(201).json({ editCount: foundUser.editCount });
-        }).catch((err) => {
-            res.status(400).json({ message: err.message });
-        });
-})
-
 const getUserDetails = asyncHandler(async (req, res) => {
     const user = req.userData.user;
 
@@ -167,7 +136,26 @@ const getUserDetails = asyncHandler(async (req, res) => {
     }).catch((err) => {
         res.status(400).json({ message: err.message });
     });
+})
 
+const getPredictions = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+
+    await User.findOne({ phoneNumber: user }).then((foundUser) => {
+        res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions });
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+})
+const setPredictions = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+    const { predictions, tempPredictions, addedPredictions, editedPredictions } = req.body;
+    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { predictions: predictions, tempPredictions: tempPredictions, addedPredictions: addedPredictions, editedPredictions: editedPredictions } },
+        { new: true }).then((foundUser) => {
+            res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions });
+        }).catch((err) => {
+            res.status(400).json({ message: err.message });
+        });
 })
 
 const sendOtp = asyncHandler(async (req, res) => {
@@ -195,4 +183,4 @@ const resendOtp = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getEditCount, updateEditCount, decrementEditCount, getUserDetails, getUsers, resetPassword, resendOtp, verifyOtp, sendOtp };
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getUserDetails, getUsers, getPredictions, setPredictions, resetPassword, resendOtp, verifyOtp, sendOtp };

@@ -1,5 +1,5 @@
 const express = require("express");
-const { verifyUser, loginUser, registerUser, userSettings, getEditCount, updateEditCount, decrementEditCount, getUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp, getUsers } = require("../controllers/userControllers.js");
+const { verifyUser, loginUser, registerUser, userSettings, getUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp, getUsers, setPredictions, getPredictions } = require("../controllers/userControllers.js");
 const router = express.Router();
 
 router.post("/register", registerUser);
@@ -16,8 +16,7 @@ router.get("resend_otp", resendOtp);
 router.post("/reset_password", resetPassword);
 router.get("/users", getUsers);
 
-router.get("/edit_count", verifyUser, getEditCount);
-router.post("/edit_count", verifyUser, decrementEditCount);
-router.post("/update_edit_count", verifyUser, updateEditCount);
+router.post("/predictions", verifyUser, setPredictions);
+router.get("/predictions", verifyUser, getPredictions);
 
 module.exports = router;
