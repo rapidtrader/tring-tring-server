@@ -77,7 +77,11 @@ const userSchema = mongoose.Schema({
     editedPredictions: {
         type: Number,
         default: 0
-    }
+    },
+    adsViewed: {
+        type: Number,
+        default: 0
+    },
 }, {
     timestamps: true,
 })

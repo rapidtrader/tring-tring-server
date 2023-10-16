@@ -48,7 +48,9 @@ const EditWinningNumber = asyncHandler(async (req, res) => {
 const userPredictionNumber = asyncHandler(async (req, res) => {
 
     const user = req.userData.user;
-    const { predictionNumber } = req.body;
+    const { predictionNumber, announced } = req.body;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     await User.findOne({ phoneNumber: user }).then((foundUser) => {
         if (!foundUser) {
@@ -56,16 +58,31 @@ const userPredictionNumber = asyncHandler(async (req, res) => {
         }
         else {
             const userId = foundUser._id;
-            const userPrediction = new Transaction({
-                user_id: userId,
-                prediction_number: predictionNumber,
-            });
+            if (announced) {
+                const userPrediction = new Transaction({
+                    user_id: userId,
+                    prediction_number: predictionNumber,
+                    transaction_date: tomorrow,
+                });
 
-            userPrediction.save().then(() => {
-                res.status(201).json({ message: "Prediction Number added successfully" });
-            }).catch((err) => {
-                res.status(400).json({ message: err.message });
-            });
+                userPrediction.save().then(() => {
+                    res.status(201).json({ message: "Prediction Number added successfully" });
+                }).catch((err) => {
+                    res.status(400).json({ message: err.message });
+                });
+            }
+            else {
+                const userPrediction = new Transaction({
+                    user_id: userId,
+                    prediction_number: predictionNumber,
+                });
+
+                userPrediction.save().then(() => {
+                    res.status(201).json({ message: "Prediction Number added successfully" });
+                }).catch((err) => {
+                    res.status(400).json({ message: err.message });
+                });
+            }
         }
     }).catch((err) => {
         res.status(400).json({ message: err.message });
@@ -106,24 +123,39 @@ function formatDateToDDMMYYYY(timestamp) {
 const AddUserPredictionNumber = asyncHandler(async (req, res) => {
 
     const user = req.userData.user;
-    const { predictionNumber } = req.body;
-
+    const { predictionNumber, announced } = req.body;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
     await User.findOne({ phoneNumber: user }).then((foundUser) => {
         if (!foundUser) {
             return res.status(404).json({ message: "User not found" });
         }
         else {
             const userId = foundUser._id;
-            const userPrediction = new Transaction({
-                user_id: userId,
-                prediction_number: predictionNumber,
-            });
+            if (announced) {
+                const userPrediction = new Transaction({
+                    user_id: userId,
+                    prediction_number: predictionNumber,
+                    transaction_date: tomorrow
+                });
 
-            userPrediction.save().then(() => {
-                res.status(201).json({ message: "Prediction Number Updated successfully" });
-            }).catch((err) => {
-                res.status(400).json({ message: err.message });
-            });
+                userPrediction.save().then(() => {
+                    res.status(201).json({ message: "Prediction Number Updated successfully" });
+                }).catch((err) => {
+                    res.status(400).json({ message: err.message });
+                });
+            } else {
+                const userPrediction = new Transaction({
+                    user_id: userId,
+                    prediction_number: predictionNumber,
+                });
+
+                userPrediction.save().then(() => {
+                    res.status(201).json({ message: "Prediction Number Updated successfully" });
+                }).catch((err) => {
+                    res.status(400).json({ message: err.message });
+                });
+            }
         }
     }).catch((err) => {
         res.status(400).json({ message: err.message });
@@ -204,6 +236,18 @@ const formattedUserHistory = async (userPredictions) => {
     });
     return formattedUHistory;
 }
+const getWinners = asyncHandler(async (req, res) => {
+    const transactions = await Transaction.find();
+    const formattedWinners = await formatWinners(transactions);
+    res.status(200).json(transactions);
+
+});
+
+const formatWinners = async (transactions) => {
+    const formattedUHistory = [];
+    const draws = await Draw.find();
+    return formattedUHistory;
+}
 
 
-module.exports = { getAllWinningNumbers, addNewWinningNumber, EditWinningNumber, userPredictionNumber, AddUserPredictionNumber, editUserPredictionNumber, getUserPredictionNumber, getUserPredictionHistory };
+module.exports = { getAllWinningNumbers, addNewWinningNumber, EditWinningNumber, getWinners, userPredictionNumber, AddUserPredictionNumber, editUserPredictionNumber, getUserPredictionNumber, getUserPredictionHistory };

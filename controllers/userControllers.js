@@ -142,17 +142,17 @@ const getPredictions = asyncHandler(async (req, res) => {
     const user = req.userData.user;
 
     await User.findOne({ phoneNumber: user }).then((foundUser) => {
-        res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions });
+        res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions, adsViewed: foundUser.adsViewed });
     }).catch((err) => {
         res.status(400).json({ message: err.message });
     });
 })
 const setPredictions = asyncHandler(async (req, res) => {
     const user = req.userData.user;
-    const { predictions, tempPredictions, addedPredictions, editedPredictions } = req.body;
-    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { predictions: predictions, tempPredictions: tempPredictions, addedPredictions: addedPredictions, editedPredictions: editedPredictions } },
+    const { predictions, tempPredictions, addedPredictions, editedPredictions, adsViewed } = req.body;
+    await User.findOneAndUpdate({ phoneNumber: user }, { $inc: { predictions: predictions, tempPredictions: tempPredictions, addedPredictions: addedPredictions, editedPredictions: editedPredictions, adsViewed: adsViewed } },
         { new: true }).then((foundUser) => {
-            res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions });
+            res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions, adsViewed: foundUser.adsViewed });
         }).catch((err) => {
             res.status(400).json({ message: err.message });
         });
