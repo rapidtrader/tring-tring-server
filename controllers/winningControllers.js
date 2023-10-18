@@ -213,7 +213,7 @@ const formattedUserHistory = async (userPredictions) => {
     const formattedUHistory = [];
     const draws = await Draw.find();
     userPredictions.forEach((userPrediction) => {
-        const { _id, transaction_date, prediction_number } = userPrediction;
+        const { _id, transaction_date, created_date_time, prediction_number } = userPrediction;
         const winning_numbers = [];
         const youtube_urls = [];
         draws.forEach((draw) => {
@@ -229,6 +229,7 @@ const formattedUserHistory = async (userPredictions) => {
         formattedUHistory.push({
             _id,
             transaction_date,
+            created_date_time,
             prediction_number,
             winning_number,
             youtube_url
