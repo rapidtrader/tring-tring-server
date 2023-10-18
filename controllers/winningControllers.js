@@ -93,14 +93,14 @@ const userPredictionNumber = asyncHandler(async (req, res) => {
 const editUserPredictionNumber = asyncHandler(async (req, res) => {
     const { predictionNumber, id } = req.body;
     const user = req.userData.user;
-    const transaction_date = new Date();
+    const created_date_time = new Date();
     const objectId = new mongoose.Types.ObjectId(id);
     await User.findOne({ phoneNumber: user }).then((foundUser) => {
         if (!foundUser) {
             return res.status(404).json({ message: "User not found" });
         }
         else {
-            Transaction.findByIdAndUpdate(objectId, { prediction_number: predictionNumber, transaction_date }, { new: true }).then(() => {
+            Transaction.findByIdAndUpdate(objectId, { prediction_number: predictionNumber, created_date_time }, { new: true }).then(() => {
                 res.status(200).json({ message: "Updated Successfully" });
             });
         }
