@@ -64,7 +64,7 @@ const userSchema = mongoose.Schema({
     },
     predictions: {
         type: Number,
-        default: 0,
+        default: 1,
     },
     tempPredictions: {
         type: Number,
@@ -82,6 +82,10 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    reset: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true,
 })

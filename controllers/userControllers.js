@@ -158,6 +158,28 @@ const setPredictions = asyncHandler(async (req, res) => {
         });
 })
 
+const setReset = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+
+    const { reset } = req.body;
+
+    await User.findOneAndUpdate({ phoneNumber: user }, { $set: { reset: reset } }, { new: true }).then((foundUser) => {
+        res.status(201).json({ reset: foundUser.reset });
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+})
+
+const getReset = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+
+    await User.findOne({ phoneNumber: user }).then((foundUser) => {
+        res.status(201).json({ reset: foundUser.reset });
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+})
+
 const sendOtp = asyncHandler(async (req, res) => {
     sdk.auth('406611Tj5sg0N5D6511529cP1');
     sdk.sendotp({
@@ -183,4 +205,4 @@ const resendOtp = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getUserDetails, getUsers, getPredictions, setPredictions, resetPassword, resendOtp, verifyOtp, sendOtp };
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getUserDetails, getUsers, getPredictions, setPredictions, setReset, getReset, resetPassword, resendOtp, verifyOtp, sendOtp };
