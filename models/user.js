@@ -64,7 +64,7 @@ const userSchema = mongoose.Schema({
     },
     predictions: {
         type: Number,
-        default: 1,
+        default: 0,
     },
     tempPredictions: {
         type: Number,
