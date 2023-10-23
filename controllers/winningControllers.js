@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Draw = require("../models/draw.js");
 const Transaction = require("../models/transaction.js");
 const User = require("../models/user.js");
+const Misc = require("../models/misc.js")
 const mongoose = require('mongoose');
 
 const getAllWinningNumbers = asyncHandler(async (req, res) => {
@@ -15,15 +16,17 @@ const getAllWinningNumbers = asyncHandler(async (req, res) => {
 });
 
 const addNewWinningNumber = asyncHandler(async (req, res) => {
-    const { winningNumber, youtube_url } = req.body;
+    const { winningNumber, youtubeUrl } = req.body;
 
     const winning = new Draw({
         winning_number: winningNumber,
-        youtube_url
+        youtube_url: youtubeUrl
     });
-
+    await User.updateMany({}, { $set: { tempPredictions: 1, addedPredictions: 0, editedPredictions: 0, adsViewed: 0, reset: true } });
+    await Misc.findByIdAndUpdate("6536656eaba7518444d9908c", { resetToday: true })
     await winning.save().then((winningNumber) => {
         res.status(201).json({ message: "Winning number added successfully" });
+
     }).catch((err) => {
         res.status(400).json({ message: err.message });
     });
