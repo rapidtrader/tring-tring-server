@@ -26,7 +26,7 @@ app.use('/api/winning', winningRoute);
 cron.schedule('0 0 * * *', async () => {
     const r = await Misc.findOne({ identity: "reset" })
     if (r.resetToday == true) {
-        await Misc.findByIdAndUpdate("6536656eaba7518444d9908c", { resetToday: false })
+        await Misc.findByIdAndUpdate("6538a4eb6024c2e9299ec20a", { resetToday: false })
         console.log("no reset")
     }
     else {
