@@ -14,7 +14,7 @@ const drawSchema = new mongoose.Schema({
         default: "null"
     },
     winning_number: {
-        type: Number,
+        type: String,
         required: true,
     },
     youtube_url: {

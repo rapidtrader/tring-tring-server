@@ -32,7 +32,7 @@ const transactionSchema = new mongoose.Schema({
         default: "null"
     },
     prediction_number: {
-        type: Number,
+        type: String,
         required: true,
     },
     transaction_date: {
