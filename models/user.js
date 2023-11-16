@@ -85,7 +85,10 @@ const userSchema = mongoose.Schema({
     reset: {
         type: Boolean,
         default: false
-    }
+    },
+    myReferralCode: {
+        type: String,
+    },
 }, {
     timestamps: true,
 })

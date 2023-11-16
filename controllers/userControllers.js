@@ -9,10 +9,28 @@ const generateToken = (user) => {
     return jwt.sign({ user: user.phoneNumber }, "shhh secret",);
 };
 
+function generateCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+
+    for (let i = 0; i < 8; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
+    }
+
+    return code;
+}
+
 const registerUser = asyncHandler(async (req, res) => {
-    const { phoneNumber, email, name, age, gender, language, ip_address, location, region, password } = req.body;
+    const { phoneNumber, email, name, age, gender, language, ip_address, location, region, password, referralCode } = req.body;
 
     try {
+        let uniqueCode = true;
+        let myReferralCode = '';
+        while (uniqueCode) {
+            myReferralCode = generateCode();
+            uniqueCode = await User.findOne({ myReferralCode }).exec();
+        }
         const user = await User.findOne({ phoneNumber }).exec();
         if (user) {
             return res.status(408).json({ message: "User already exists" });
@@ -29,8 +47,19 @@ const registerUser = asyncHandler(async (req, res) => {
                 location,
                 region,
                 password: hash,
+                myReferralCode
             });
             await newUser.save();
+
+            const matchReferralCode = await User.findOne({ myReferralCode: referralCode }).exec();
+            if (matchReferralCode) {
+                await User.findOneAndUpdate({ phoneNumber: matchReferralCode.phoneNumber }, { $inc: { predictions: 5 } },
+                    { new: true }).then((foundUser) => {
+                        res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions, adsViewed: foundUser.adsViewed });
+                    }).catch((err) => {
+                        res.status(400).json({ message: err.message });
+                    });
+            }
 
             return res.status(201).json({
                 data: {
