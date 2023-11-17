@@ -80,27 +80,34 @@ const loginUser = asyncHandler(async (req, res) => {
     try {
         const foundUser = await User.findOne({ phoneNumber });
         const hash = foundUser.password;
-        bcrypt.compare(password, hash, (err, result) => {
-            if (err) throw err;
-            else {
-                if (result) {
-                    res.status(200).json({
-                        data: {
-                            phoneNumber: foundUser.phoneNumber,
-                            token: generateToken(foundUser),
-                        },
-                        message: "Login successful",
-                    });
-                } else {
-                    res.status(401).json({
-                        data: {},
-                        message: "Invalid credentials"
-                    });
+        if (foundUser) {
+            bcrypt.compare(password, hash, (err, result) => {
+                if (err) throw err;
+                else {
+                    if (result) {
+                        res.status(200).json({
+                            data: {
+                                phoneNumber: foundUser.phoneNumber,
+                                token: generateToken(foundUser),
+                            },
+                            message: "Login successful",
+                        });
+                    } else {
+                        res.status(401).json({
+                            data: {},
+                            message: "Invalid credentials"
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
+        else {
+            res.status(200).json({
+                message: "User not found !!!",
+            });
+        }
     } catch (error) {
-        res.status(409).json({ message: error.message });
+        res.status(409).json({ message: error.message, cool: "cool" });
     }
 });
 
