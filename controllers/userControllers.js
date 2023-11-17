@@ -53,14 +53,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
             const matchReferralCode = await User.findOne({ myReferralCode: referralCode }).exec();
             if (matchReferralCode) {
-                await User.findOneAndUpdate({ phoneNumber: matchReferralCode.phoneNumber }, { $inc: { predictions: 5 } },
-                    { new: true }).then((foundUser) => {
-                        res.status(201).json({ predictions: foundUser.predictions, tempPredictions: foundUser.tempPredictions, addedPredictions: foundUser.addedPredictions, editedPredictions: foundUser.editedPredictions, adsViewed: foundUser.adsViewed });
-                    }).catch((err) => {
-                        res.status(400).json({ message: err.message });
-                    });
+                await User.findOneAndUpdate({ phoneNumber: matchReferralCode.phoneNumber }, { $inc: { predictions: 5 } }, { new: true });
             }
-
             return res.status(201).json({
                 data: {
                     phoneNumber: newUser.phoneNumber,
