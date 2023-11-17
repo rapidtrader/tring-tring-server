@@ -79,8 +79,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
     try {
         const foundUser = await User.findOne({ phoneNumber });
-        const hash = foundUser.password;
         if (foundUser) {
+            const hash = foundUser.password;
             bcrypt.compare(password, hash, (err, result) => {
                 if (err) throw err;
                 else {
