@@ -102,7 +102,7 @@ const loginUser = asyncHandler(async (req, res) => {
             });
         }
         else {
-            res.status(200).json({
+            res.status(201).json({
                 message: "User not found !!!",
             });
         }
