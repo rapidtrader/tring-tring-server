@@ -23,7 +23,7 @@ const addNewWinningNumber = asyncHandler(async (req, res) => {
         youtube_url: youtubeUrl
     });
     await User.updateMany({}, { $set: { tempPredictions: 1, addedPredictions: 0, editedPredictions: 0, adsViewed: 0, reset: true } });
-    await Misc.findByIdAndUpdate("6536656eaba7518444d9908c", { resetToday: true })
+    await Misc.findByIdAndUpdate("6538a4eb6024c2e9299ec20a", { resetToday: true })
     await winning.save().then((winningNumber) => {
         res.status(201).json({ message: "Winning number added successfully" });
 
