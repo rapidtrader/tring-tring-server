@@ -1,5 +1,5 @@
 const express = require("express");
-const { verifyUser, loginUser, registerUser, userSettings, getUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp, getUsers, setPredictions, getPredictions, setReset, getReset } = require("../controllers/userControllers.js");
+const { verifyUser, loginUser, registerUser, userSettings, getUserDetails, setUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp, getUsers, setPredictions, getPredictions, setReset, getReset } = require("../controllers/userControllers.js");
 const router = express.Router();
 
 router.post("/register", registerUser);
@@ -8,6 +8,7 @@ router.get("/verify", verifyUser, (req, res) => { res.send(req.userData) });
 router.post("/settings", verifyUser, userSettings);
 
 router.get("/user_details", verifyUser, getUserDetails);
+router.post("/user_details", verifyUser, setUserDetails);
 
 router.post("/send_otp", sendOtp);
 router.get("/verify_otp", verifyOtp);

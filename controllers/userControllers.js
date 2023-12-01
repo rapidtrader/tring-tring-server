@@ -168,6 +168,18 @@ const getUserDetails = asyncHandler(async (req, res) => {
     });
 })
 
+const setUserDetails = asyncHandler(async (req, res) => {
+    const user = req.userData.user;
+
+    const { name, email, phoneNumber, notificationsEnabled } = req.body;
+
+    await User.findOneAndUpdate({ phoneNumber: user }, { $set: { name, email, phoneNumber, notificationsEnabled } }, { new: true }).then((foundUser) => {
+        res.status(201).json(foundUser);
+    }).catch((err) => {
+        res.status(400).json({ message: err.message });
+    });
+})
+
 const getPredictions = asyncHandler(async (req, res) => {
     const user = req.userData.user;
 
@@ -235,4 +247,4 @@ const resendOtp = asyncHandler(async (req, res) => {
 })
 
 
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getUserDetails, getUsers, getPredictions, setPredictions, setReset, getReset, resetPassword, resendOtp, verifyOtp, sendOtp };
+module.exports = { registerUser, loginUser, verifyUser, userSettings, getUserDetails, setUserDetails, getUsers, getPredictions, setPredictions, setReset, getReset, resetPassword, resendOtp, verifyOtp, sendOtp };
