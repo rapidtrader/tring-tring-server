@@ -11,6 +11,8 @@ const Misc = require("./models/misc.js")
 const User = require("./models/user.js")
 const PORT = process.env.PORT || 8080;
 
+// const { UserDetail } = require("otpless-node-js-auth-sdk");
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -34,6 +36,21 @@ cron.schedule('0 0 * * *', async () => {
         console.log("reset")
     }
 });
+
+// const token = "528c26bad65d43d2bf356313ba88ebb5"; // Replace with your token
+// const clientId = "XSES9QEEJ2U72AL51IPKMA127G1DEIE7"; // Replace with your client ID
+// const clientSecret = "v3ffvb8uy06cmoyb0c3m2naps0rjmzsf"; // Replace with your client secret
+
+// const userDetail = async () => {
+//     const userDetails = await UserDetail.verifyToken(
+//         token,
+//         clientId,
+//         clientSecret
+//     )
+//     console.log("User Details:", userDetails);
+// }
+
+// userDetail();
 
 // DB Config
 mongoose.set('strictQuery', true);
