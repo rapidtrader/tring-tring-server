@@ -1,6 +1,8 @@
 const express = require("express");
-const { verifyUser, loginUser, registerUser, userSettings, getUserDetails, setUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp, getUsers, setPredictions, getPredictions, setReset, getReset } = require("../controllers/userControllers.js");
+const { verifyUser, loginUser, registerUser, userSettings, getUserDetails, setUserDetails, resetPassword, resendOtp, verifyOtp, sendOtp, getUsers, setPredictions, getPredictions, setReset, getReset, OTPLessLogin } = require("../controllers/userControllers.js");
 const router = express.Router();
+
+router.post("/otpless_login", OTPLessLogin);
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);

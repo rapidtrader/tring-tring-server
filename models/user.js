@@ -60,7 +60,6 @@ const userSchema = mongoose.Schema({
 
     password: {
         type: String,
-        required: true,
     },
     predictions: {
         type: Number,

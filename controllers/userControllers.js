@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 const User = require("../models/user.js");
 const sdk = require('api')('@msg91api/v5.0#6n91xmlhu4pcnz');
+const { UserDetail } = require("otpless-node-js-auth-sdk");
 
 const generateToken = (user) => {
     return jwt.sign({ user: user.phoneNumber }, "shhh secret",);
@@ -20,6 +21,66 @@ function generateCode() {
 
     return code;
 }
+
+const OTPLessLogin = asyncHandler(async (req, res) => {
+
+    const { token } = req.body;
+
+    let uniqueCode = true;
+    let myReferralCode = '';
+    while (uniqueCode) {
+        myReferralCode = generateCode();
+        uniqueCode = await User.findOne({ myReferralCode }).exec();
+    }
+
+    try {
+        const clientId = "XSES9QEEJ2U72AL51IPKMA127G1DEIE7"; // Replace with your client ID
+        const clientSecret = "v3ffvb8uy06cmoyb0c3m2naps0rjmzsf"; // Replace with your client secret
+
+        const userDetails = await UserDetail.verifyToken(
+            token,
+            clientId,
+            clientSecret
+        )
+
+        const { phone_number: phoneNumber, email, name } = userDetails;
+        const user = await User.findOne({ phoneNumber }).exec();
+
+        if (user) {
+            return res.status(200).json({
+                data: {
+                    phoneNumber: user.phoneNumber,
+                    token: generateToken(user),
+                },
+                message: "Login successful",
+            });
+        } else {
+            const newUser = new User({
+                phoneNumber,
+                name,
+                age,
+                email,
+                gender,
+                language,
+                ip_address,
+                location,
+                region,
+                myReferralCode
+            });
+            await newUser.save();
+
+            return res.status(201).json({
+                data: {
+                    phoneNumber: newUser.phoneNumber,
+                    token: generateToken(newUser),
+                },
+                message: "User created successfully",
+            })
+        }
+    } catch (error) {
+        res.status(409).json({ message: error.message });
+    }
+})
 
 const registerUser = asyncHandler(async (req, res) => {
     const { phoneNumber, email, name, age, gender, language, ip_address, location, region, password, referralCode } = req.body;
@@ -246,5 +307,4 @@ const resendOtp = asyncHandler(async (req, res) => {
         .catch(err => console.error(err));
 })
 
-
-module.exports = { registerUser, loginUser, verifyUser, userSettings, getUserDetails, setUserDetails, getUsers, getPredictions, setPredictions, setReset, getReset, resetPassword, resendOtp, verifyOtp, sendOtp };
+module.exports = { OTPLessLogin, registerUser, loginUser, verifyUser, userSettings, getUserDetails, setUserDetails, getUsers, getPredictions, setPredictions, setReset, getReset, resetPassword, resendOtp, verifyOtp, sendOtp };
