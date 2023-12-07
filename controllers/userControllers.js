@@ -43,7 +43,7 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
             clientSecret
         )
 
-        const { phone_number: phoneNumber, email, name } = userDetails;
+        const { national_phone_number: phoneNumber, email, name } = userDetails;
         const user = await User.findOne({ phoneNumber }).exec();
 
         if (user) {
@@ -58,13 +58,7 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
             const newUser = new User({
                 phoneNumber,
                 name,
-                age,
                 email,
-                gender,
-                language,
-                ip_address,
-                location,
-                region,
                 myReferralCode
             });
             await newUser.save();
