@@ -51,7 +51,7 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
         console.log(user);
         if (user) {
             console.log("exits");
-            res.status(200).json(userDetails);
+            return res.status(200).json(userDetails);
         } else {
             console.log("new user");
             // const newUser = new User({
