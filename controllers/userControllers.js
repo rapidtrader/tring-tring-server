@@ -32,11 +32,11 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
         myReferralCode = generateCode();
         uniqueCode = await User.findOne({ myReferralCode }).exec();
     }
-
     try {
         const clientId = "XSES9QEEJ2U72AL51IPKMA127G1DEIE7"; // Replace with your client ID
         const clientSecret = "v3ffvb8uy06cmoyb0c3m2naps0rjmzsf"; // Replace with your client secret
 
+        console.log(token);
         const userDetails = await UserDetail.verifyToken(
             token,
             clientId,
@@ -46,34 +46,23 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
         const filter = {
             $or: [{ phoneNumber: phoneNumber }, { email: email }]
         };
+        console.log(filter);
         const user = await User.findOne(filter).exec();
         console.log(user);
         if (user) {
             console.log("exits");
-            res.status(200).json({
-                data: {
-                    phoneNumber: user.phoneNumber,
-                    token: generateToken(user),
-                },
-                message: "Login successful",
-            });
+            res.status(200).json(userDetails);
         } else {
             console.log("new user");
-            const newUser = new User({
-                phoneNumber,
-                name,
-                email,
-                myReferralCode
-            });
-            await newUser.save();
+            // const newUser = new User({
+            //     phoneNumber,
+            //     name,
+            //     email,
+            //     myReferralCode
+            // });
+            // await newUser.save();
 
-            return res.status(201).json({
-                data: {
-                    phoneNumber: newUser.phoneNumber,
-                    token: generateToken(newUser),
-                },
-                message: "User created successfully",
-            })
+            return res.status(201).json(userDetails)
         }
     } catch (error) {
         res.status(409).json({ message: error.message });
