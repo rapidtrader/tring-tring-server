@@ -32,23 +32,23 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
         myReferralCode = generateCode();
         uniqueCode = await User.findOne({ myReferralCode }).exec();
     }
-    try {
-        const clientId = "XSES9QEEJ2U72AL51IPKMA127G1DEIE7"; // Replace with your client ID
-        const clientSecret = "v3ffvb8uy06cmoyb0c3m2naps0rjmzsf"; // Replace with your client secret
+    const clientId = "XSES9QEEJ2U72AL51IPKMA127G1DEIE7"; // Replace with your client ID
+    const clientSecret = "v3ffvb8uy06cmoyb0c3m2naps0rjmzsf"; // Replace with your client secret
 
-        console.log(token);
-        const userDetails = await UserDetail.verifyToken(
-            token,
-            clientId,
-            clientSecret
-        )
-        const { national_phone_number: phoneNumber, email, name } = userDetails;
-        const filter = {
-            $or: [{ phoneNumber: phoneNumber }, { email: email }]
-        };
-        console.log(filter);
-        const user = await User.findOne(filter).exec();
-        console.log(user);
+    console.log(token);
+    const userDetails = await UserDetail.verifyToken(
+        token,
+        clientId,
+        clientSecret
+    )
+    const { national_phone_number: phoneNumber, email, name } = userDetails;
+    const filter = {
+        $or: [{ phoneNumber: phoneNumber }, { email: email }]
+    };
+    console.log(filter);
+    const user = await User.findOne(filter).exec();
+    console.log(user);
+    try {
         if (user) {
             console.log("exits");
             return res.status(200).json(userDetails);
