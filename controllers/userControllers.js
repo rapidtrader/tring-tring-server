@@ -73,12 +73,12 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
     const { token } = req.body;
 
     try {
-        let uniqueCode = true;
-        let myReferralCode = '';
-        while (uniqueCode) {
-            myReferralCode = generateCode();
-            uniqueCode = await User.findOne({ myReferralCode }).exec();
-        }
+        // let uniqueCode = true;
+        // let myReferralCode = '';
+        // while (uniqueCode) {
+        //     myReferralCode = generateCode();
+        //     uniqueCode = await User.findOne({ myReferralCode }).exec();
+        // }
 
         const clientId = "XSES9QEEJ2U72AL51IPKMA127G1DEIE7"; // Replace with your client ID
         const clientSecret = "v3ffvb8uy06cmoyb0c3m2naps0rjmzsf"; // Replace with your client secret
@@ -89,31 +89,31 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
             clientSecret
         )
         const { national_phone_number: phoneNumber, email, name } = userDetails;
-        const filter = {
-            $or: [{ phoneNumber: phoneNumber }, { email: email }]
-        };
-        console.log(filter);
-        const user = await User.findOne(filter).exec();
+        return res.status(408).json({ phoneNumber: phoneNumber, email: email });
+        // const filter = {
+        //     $or: [{ phoneNumber: phoneNumber }, { email: email }]
+        // };
+        // console.log(filter);
+        // const user = await User.findOne(filter).exec();
 
-        if (user) {
-            return res.status(408).json({ phoneNumber: phoneNumber, email: email });
-        } else {
-            const newUser = new User({
-                phoneNumber,
-                name,
-                email,
-                myReferralCode
-            });
-            await newUser.save();
+        // if (user) {
+        // } else {
+        //     const newUser = new User({
+        //         phoneNumber,
+        //         name,
+        //         email,
+        //         myReferralCode
+        //     });
+        //     await newUser.save();
 
-            return res.status(201).json({
-                data: {
-                    phoneNumber: newUser.phoneNumber,
-                    token: generateToken(newUser),
-                },
-                message: "User created successfully",
-            })
-        }
+        //     return res.status(201).json({
+        //         data: {
+        //             phoneNumber: newUser.phoneNumber,
+        //             token: generateToken(newUser),
+        //         },
+        //         message: "User created successfully",
+        //     })
+        // }
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
