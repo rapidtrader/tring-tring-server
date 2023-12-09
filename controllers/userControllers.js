@@ -7,7 +7,7 @@ const sdk = require('api')('@msg91api/v5.0#6n91xmlhu4pcnz');
 const { UserDetail } = require("otpless-node-js-auth-sdk");
 
 const generateToken = (user) => {
-    return jwt.sign({ user: user.phoneNumber }, "shhh secret",);
+    return jwt.sign({ user: user.phoneNumber, }, "shhh secret",);
 };
 
 function generateCode() {
@@ -51,6 +51,7 @@ const createUser = asyncHandler(async (req, res) => {
             return res.status(201).json({
                 data: {
                     phoneNumber: newUser.phoneNumber,
+                    email: newUser.email,
                     token: generateToken(newUser),
                 },
                 message: "User created successfully",
@@ -140,14 +141,14 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
                         email: email,
                         token: generateToken(userDetails),
                     },
-                    message: "User created successfully",
+                    message: "User Exists",
                 }
             );
         } else {
             return res.status(201).json({
                 data: {
-                    phoneNumber: newUser.phoneNumber,
-                    email: newUser.email,
+                    phoneNumber: phoneNumber,
+                    email: email,
                     token: generateToken(newUser),
                 },
                 message: "User created successfully",
