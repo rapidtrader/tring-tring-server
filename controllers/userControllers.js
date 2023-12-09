@@ -95,7 +95,7 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
         const user = await User.findOne(filter).exec();
 
         if (user) {
-            return res.status(408).json(
+            return res.status(200).json(
                 {
                     data: {
                         phoneNumber: phoneNumber,
@@ -106,13 +106,20 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
                 }
             );
         } else {
-            const newUser = new User({
-                phoneNumber,
-                name,
-                email,
-                myReferralCode
-            });
-            await newUser.save();
+            // const newUser = new User({
+            //     phoneNumber,
+            //     name,
+            //     email,
+            //     myReferralCode,
+            //     age: "",
+            //     gender: "",
+            //     language: "",
+            //     ip_address: "",
+            //     location: "",
+            //     region: "",
+            //     password: ""
+            // });
+            // await newUser.save();
 
             return res.status(201).json({
                 data: {
