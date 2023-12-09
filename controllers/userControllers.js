@@ -41,15 +41,15 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
         clientId,
         clientSecret
     )
-    const { national_phone_number: phoneNumber, email, name } = userDetails;
-    const filter = {
-        $or: [{ phoneNumber: phoneNumber }, { email: email }]
-    };
-    console.log(filter);
-    const user = await User.findOne(filter).exec();
-    console.log(user);
+    // const { national_phone_number: phoneNumber, email, name } = userDetails;
+    // const filter = {
+    //     $or: [{ phoneNumber: phoneNumber }, { email: email }]
+    // };
+    // console.log(filter);
+    // const user = await User.findOne(filter).exec();
+    // console.log(user);
     try {
-        if (user) {
+        if (true) {
             console.log("exits");
             return res.status(200).json(userDetails);
         } else {
