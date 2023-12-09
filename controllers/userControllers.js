@@ -73,8 +73,6 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
     const { token } = req.body;
 
     try {
-
-        //for custom referral code
         let uniqueCode = true;
         let myReferralCode = '';
         while (uniqueCode) {
@@ -82,7 +80,6 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
             uniqueCode = await User.findOne({ myReferralCode }).exec();
         }
 
-        //OTPLess
         const clientId = "XSES9QEEJ2U72AL51IPKMA127G1DEIE7"; // Replace with your client ID
         const clientSecret = "v3ffvb8uy06cmoyb0c3m2naps0rjmzsf"; // Replace with your client secret
 
@@ -92,22 +89,23 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
             clientSecret
         )
         const { national_phone_number: phoneNumber, email, name } = userDetails;
-
-        //Check user exists with this email or phoneNumber
         const filter = {
             $or: [{ phoneNumber: phoneNumber }, { email: email }]
         };
-
         const user = await User.findOne(filter).exec();
 
         if (user) {
-            //send UserDetails
-            return res.status(408).json({
-                data: userDetails,
-                message: "Logged in",
-            });
+            return res.status(408).json(
+                {
+                    data: {
+                        phoneNumber: phoneNumber,
+                        email: email,
+                        token: generateToken(userDetails),
+                    },
+                    message: "User created successfully",
+                }
+            );
         } else {
-            //Save user in mongodb
             const newUser = new User({
                 phoneNumber,
                 name,
@@ -116,9 +114,12 @@ const OTPLessLogin = asyncHandler(async (req, res) => {
             });
             await newUser.save();
 
-            // send UserDetails
             return res.status(201).json({
-                data: userDetails,
+                data: {
+                    phoneNumber: newUser.phoneNumber,
+                    email: newUser.email,
+                    token: generateToken(newUser),
+                },
                 message: "User created successfully",
             })
         }
