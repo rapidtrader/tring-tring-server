@@ -12,6 +12,7 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.4.3",
     "node-cron": "^3.0.2",
+    "nodemailer": "^6.9.14",
     "nodemon": "^3.0.1",
     "otpless-node-js-auth-sdk": "^1.0.6",
     "underscore": "^1.13.6"
